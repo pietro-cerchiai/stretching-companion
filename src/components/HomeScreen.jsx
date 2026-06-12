@@ -4,11 +4,31 @@
 import { C, META, TOTAL_PLANNED } from "../data/stretches";
 import { fmt } from "../utils/time";
 
-export default function HomeScreen({ lang, setLang, t, onStart }) {
+export default function HomeScreen({ lang, setLang, t, minutes, setMinutes, onStart }) {
   const mono = { fontFamily: "'IBM Plex Mono', monospace" };
 
   return (
     <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", padding: 28, maxWidth: 440, margin: "0 auto", width: "100%" }}>
+      {/* Optional custom session length */}
+      <div style={{ marginBottom: 16 }}>
+        <label style={{ ...mono, fontSize: 12, letterSpacing: 1, color: C.dim, textTransform: "uppercase", display: "block", marginBottom: 8 }}>
+          {t.customLength}
+        </label>
+        <input
+          type="number"
+          inputMode="numeric"
+          min="1"
+          placeholder={t.customPlaceholder}
+          value={minutes}
+          onChange={(e) => setMinutes(e.target.value)}
+          style={{
+            width: "100%", padding: "14px 16px", borderRadius: 12,
+            border: `1px solid ${C.line}`, background: C.card, color: C.cream,
+            fontSize: 16, fontFamily: "'IBM Plex Mono', monospace", outline: "none",
+            boxSizing: "border-box",
+          }}
+        />
+      </div>
       {/* Language picker */}
       <div style={{ display: "flex", gap: 8, marginBottom: 22 }}>
         {["fr", "it", "en"].map((l) => (

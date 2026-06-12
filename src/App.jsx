@@ -3,7 +3,7 @@
 // callbacks down to the three screens. The screens only display and report clicks.
 
 import { useState, useEffect, useRef } from "react";
-import { C, META } from "./data/stretches";
+import { C, META, scaleDurations } from "./data/stretches";
 import { T } from "./data/i18n";
 import { beep } from "./utils/time";
 import HomeScreen from "./components/HomeScreen";
@@ -17,6 +17,10 @@ export default function App() {
   const [remaining, setRemaining] = useState(META[0].dur); // seconds left (negative = overtime)
   const [running, setRunning] = useState(false);
   const [overtimes, setOvertimes] = useState([]); // recorded overrun per finished exercise
+  const [minutes, setMinutes] = useState(""); // custom total length in minutes ("" = default)
+
+  // Durations actually used this session, derived from the custom length.
+  const durations = scaleDurations(Number(minutes));
 
   const lastTick = useRef(null); // wall-clock timestamp of the previous tick
   const beeped = useRef(false); // ensures the zero-cue fires only once per exercise
@@ -58,7 +62,7 @@ export default function App() {
   // Start a fresh session from the first exercise.
   const start = () => {
     setIdx(0);
-    setRemaining(META[0].dur);
+    setRemaining(durations[0]);
     setOvertimes([]);
     beeped.current = false;
     setRunning(true);
@@ -76,7 +80,7 @@ export default function App() {
     } else {
       setOvertimes(newOver);
       setIdx(idx + 1);
-      setRemaining(META[idx + 1].dur);
+      setRemaining(durations[idx + 1]);
       beeped.current = false;
     }
   };
@@ -105,7 +109,14 @@ export default function App() {
       `}</style>
 
       {screen === "home" && (
-        <HomeScreen lang={lang} setLang={setLang} t={t} onStart={start} />
+        <HomeScreen
+          lang={lang}
+          setLang={setLang}
+          t={t}
+          minutes={minutes}
+          setMinutes={setMinutes}
+          onStart={start}
+        />
       )}
 
       {screen === "timer" && (

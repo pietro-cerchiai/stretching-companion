@@ -9,6 +9,7 @@ export const T = {
     remaining: "temps restant", overtime: "temps supplémentaire", paused: "en pause", cumul: "cumul dépassements",
     doneEyebrow: "Séance terminée", doneTitle: "Bien joué.", planned: "Temps prévu", real: "Temps réel",
     overruns: "Dépassements", home: "Retour à l'accueil",
+    customLength: "Durée totale (min)", customPlaceholder: "30s par exercice",
     cats: ["Haut du corps", "Bas du corps"],
     s: [
       { name: "Balancements de bras", note: "Balance les bras en travers du corps, en te tapotant le dos" },
@@ -31,6 +32,7 @@ export const T = {
     remaining: "tempo rimanente", overtime: "tempo extra", paused: "in pausa", cumul: "totale extra",
     doneEyebrow: "Sessione completata", doneTitle: "Ben fatto.", planned: "Tempo previsto", real: "Tempo reale",
     overruns: "Tempo extra", home: "Torna all'inizio",
+    customLength: "Durata totale (min)", customPlaceholder: "30s per esercizio",
     cats: ["Parte superiore", "Parte inferiore"],
     s: [
       { name: "Oscillazioni delle braccia", note: "Oscilla le braccia davanti al corpo, dandoti colpetti sulla schiena" },
@@ -53,6 +55,7 @@ export const T = {
     remaining: "time remaining", overtime: "extra time", paused: "paused", cumul: "total overtime",
     doneEyebrow: "Session complete", doneTitle: "Well done.", planned: "Planned time", real: "Actual time",
     overruns: "Overtime", home: "Back to home",
+    customLength: "Total length (min)", customPlaceholder: "30s per exercise",
     cats: ["Upper body", "Lower body"],
     s: [
       { name: "Arm swings", note: "Swing your arms across your body, patting your back" },
