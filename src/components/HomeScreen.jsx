@@ -4,7 +4,7 @@
 import { C, META, TOTAL_PLANNED } from "../data/stretches";
 import { fmt } from "../utils/time";
 
-export default function HomeScreen({ lang, setLang, t, minutes, setMinutes, theme, setTheme, onStart }) {
+export default function HomeScreen({ lang, setLang, t, minutes, setMinutes, durations, theme, setTheme, onStart }) {
   const mono = { fontFamily: "'IBM Plex Mono', monospace" };
 
   return (
@@ -83,14 +83,14 @@ export default function HomeScreen({ lang, setLang, t, minutes, setMinutes, them
       <div style={{ ...mono, fontSize: 12, letterSpacing: 2, color: C.sage, textTransform: "uppercase" }}>{t.eyebrow}</div>
       <h1 style={{ fontSize: 44, fontWeight: 700, margin: "10px 0 6px", lineHeight: 1.05 }}>{t.title}</h1>
       <div style={{ color: C.dim, fontSize: 16, marginBottom: 28 }}>
-        {META.length} {t.exercises} · {fmt(TOTAL_PLANNED)} {t.plannedMin}
+        {META.length} {t.exercises} · {fmt(durations.reduce((s, d) => s + d, 0))} {t.plannedMin}
       </div>
 
       <div style={{ background: C.card, borderRadius: 16, padding: "6px 18px", marginBottom: 28 }}>
         {t.s.map((e, i) => (
           <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "11px 0", borderBottom: i < t.s.length - 1 ? `1px solid ${C.line}` : "none" }}>
             <span style={{ fontSize: 15 }}>{e.name}</span>
-            <span style={{ ...mono, fontSize: 13, color: C.dim }}>{META[i].dur}s</span>
+            <span style={{ ...mono, fontSize: 13, color: C.dim }}>{durations[i]}s</span>
           </div>
         ))}
       </div>
