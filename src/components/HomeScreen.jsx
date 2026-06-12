@@ -9,21 +9,27 @@ export default function HomeScreen({ lang, setLang, t, minutes, setMinutes, them
 
   return (
     <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", padding: 28, maxWidth: 440, margin: "0 auto", width: "100%" }}>
-      {/* Optional reading theme */}
+      {/* Optional reading theme — horizontal scrolling list */}
       <div style={{ marginBottom: 18 }}>
         <label style={{ ...mono, fontSize: 12, letterSpacing: 1, color: C.dim, textTransform: "uppercase", display: "block", marginBottom: 8 }}>
           {t.readingTheme}
         </label>
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-          {["history", "geography", "geopolitics"].map((th) => {
+        <div
+          style={{
+            display: "flex", gap: 8, overflowX: "auto", paddingBottom: 4,
+            scrollbarWidth: "none", WebkitOverflowScrolling: "touch",
+          }}
+        >
+          {["geopolitics", "history", "geography", "ai", "politics", "science", "environment", "technology", "economy", "culture", "books", "travel", "society", "film"].map((th) => {
             const active = theme === th;
             return (
               <button
                 key={th}
                 onClick={() => setTheme(active ? null : th)}
                 style={{
+                  flexShrink: 0,
                   padding: "9px 14px", borderRadius: 999, fontSize: 14, fontWeight: 600, cursor: "pointer",
-                  fontFamily: "inherit",
+                  fontFamily: "inherit", whiteSpace: "nowrap",
                   border: `1px solid ${active ? C.sage : C.line}`,
                   background: active ? C.sage : "transparent",
                   color: active ? C.bg : C.dim,
