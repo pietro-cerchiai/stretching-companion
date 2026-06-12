@@ -40,7 +40,7 @@ export default function TimerScreen({ t, idx, remaining, running, overtimes, art
           {(loadingArticles || articles.length > 0) && (
             <button
               onClick={() => setShowReading(true)}
-              style={{ background: "none", border: "none", color: C.sage, fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+              style={{ background: "none", border: "none", color: C.coral, fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}
             >
               {loadingArticles ? t.loadingArticles : t.readBtn}
             </button>

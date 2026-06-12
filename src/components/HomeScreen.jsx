@@ -30,9 +30,9 @@ export default function HomeScreen({ lang, setLang, t, minutes, setMinutes, dura
                   flexShrink: 0,
                   padding: "9px 14px", borderRadius: 999, fontSize: 14, fontWeight: 600, cursor: "pointer",
                   fontFamily: "inherit", whiteSpace: "nowrap",
-                  border: `1px solid ${active ? C.sage : C.line}`,
-                  background: active ? C.sage : "transparent",
-                  color: active ? C.bg : C.dim,
+                  border: `1.5px solid ${active ? C.coral : C.coral}`,
+                  background: active ? C.coral : "transparent",
+                  color: active ? C.bg : C.coral,
                 }}
               >
                 {t.themes[th]}
