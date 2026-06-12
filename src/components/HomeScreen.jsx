@@ -90,7 +90,9 @@ export default function HomeScreen({ lang, setLang, t, minutes, setMinutes, dura
         {t.s.map((e, i) => (
           <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "11px 0", borderBottom: i < t.s.length - 1 ? `1px solid ${C.line}` : "none" }}>
             <span style={{ fontSize: 15 }}>{e.name}</span>
-            <span style={{ ...mono, fontSize: 13, color: C.dim }}>{durations[i]}s</span>
+            <span style={{ ...mono, fontSize: 13, color: C.dim }}>
+              {durations[i] >= 60 ? fmt(durations[i]) : `${durations[i]}s`}
+            </span>
           </div>
         ))}
       </div>

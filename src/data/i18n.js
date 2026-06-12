@@ -9,7 +9,7 @@ export const T = {
     remaining: "temps restant", overtime: "temps supplémentaire", paused: "en pause", cumul: "cumul dépassements",
     doneEyebrow: "Séance terminée", doneTitle: "Bien joué.", planned: "Temps prévu", real: "Temps réel",
     overruns: "Dépassements", home: "Retour à l'accueil",
-    customLength: "Durée totale (min)", customPlaceholder: "30s par exercice",
+    customLength: "Durée totale (min)", customPlaceholder: "Ex. 10 min",
     readingTheme: "Thème de lecture (optionnel)",
 themes: {
       geopolitics: "Géopolitique", history: "Histoire", geography: "Géographie", ai: "IA",
@@ -42,7 +42,7 @@ themes: {
     remaining: "tempo rimanente", overtime: "tempo extra", paused: "in pausa", cumul: "totale extra",
     doneEyebrow: "Sessione completata", doneTitle: "Ben fatto.", planned: "Tempo previsto", real: "Tempo reale",
     overruns: "Tempo extra", home: "Torna all'inizio",
-    customLength: "Durata totale (min)", customPlaceholder: "30s per esercizio",
+    customLength: "Durata totale (min)", customPlaceholder: "Es. 10 min",
     readingTheme: "Tema di lettura (opzionale)",
     themes: {
       geopolitics: "Geopolitica", history: "Storia", geography: "Geografia", ai: "IA",
@@ -75,7 +75,7 @@ themes: {
     remaining: "time remaining", overtime: "extra time", paused: "paused", cumul: "total overtime",
     doneEyebrow: "Session complete", doneTitle: "Well done.", planned: "Planned time", real: "Actual time",
     overruns: "Overtime", home: "Back to home",
-    customLength: "Total length (min)", customPlaceholder: "30s per exercise",
+    customLength: "Total length (min)", customPlaceholder: "e.g. 10 min",
     readingTheme: "Reading theme (optional)",
     themes: {
       geopolitics: "Geopolitics", history: "History", geography: "Geography", ai: "AI",
