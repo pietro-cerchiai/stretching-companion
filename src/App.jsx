@@ -139,6 +139,7 @@ export default function App() {
           t={t}
           minutes={minutes}
           setMinutes={setMinutes}
+          durations={durations}
           theme={theme}
           setTheme={setTheme}
           onStart={start}
