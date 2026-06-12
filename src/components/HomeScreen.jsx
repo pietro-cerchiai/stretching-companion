@@ -1,5 +1,5 @@
 // src/components/HomeScreen.jsx
-// Landing screen: language picker, session overview, and the start button.
+// Landing screen: language picker, theme list, session overview, guide + start.
 
 import { C, META, TOTAL_PLANNED } from "../data/stretches";
 import { fmt } from "../utils/time";
@@ -41,6 +41,7 @@ export default function HomeScreen({ lang, setLang, t, minutes, setMinutes, dura
           })}
         </div>
       </div>
+
       {/* Optional custom session length */}
       <div style={{ marginBottom: 16 }}>
         <label style={{ ...mono, fontSize: 12, letterSpacing: 1, color: C.dim, textTransform: "uppercase", display: "block", marginBottom: 8 }}>
@@ -61,6 +62,7 @@ export default function HomeScreen({ lang, setLang, t, minutes, setMinutes, dura
           }}
         />
       </div>
+
       {/* Language picker */}
       <div style={{ display: "flex", gap: 8, marginBottom: 22 }}>
         {["fr", "it", "en"].map((l) => (
@@ -96,6 +98,21 @@ export default function HomeScreen({ lang, setLang, t, minutes, setMinutes, dura
           </div>
         ))}
       </div>
+
+      {/* Guide (PDF) — opens in a new tab, doesn't disturb the app */}
+      <a
+        href="/guide.pdf"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          display: "block", textAlign: "center", textDecoration: "none",
+          padding: "14px 0", borderRadius: 12, marginBottom: 12,
+          border: `1px solid ${C.line}`, color: C.dim,
+          fontSize: 15, fontWeight: 600, fontFamily: "inherit",
+        }}
+      >
+        {t.guide}
+      </a>
 
       <button
         onClick={onStart}

@@ -37,6 +37,14 @@ export default function TimerScreen({ t, idx, remaining, running, overtimes, art
           {t.cats[META[idx].cat]} · {idx + 1}/{META.length}
         </div>
         <div style={{ display: "flex", gap: 14, alignItems: "center" }}>
+          <a
+            href="/guide.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: C.sage, fontSize: 14, fontWeight: 600, textDecoration: "none", fontFamily: "inherit" }}
+          >
+            {t.guide}
+          </a>
           {(loadingArticles || articles.length > 0) && (
             <button
               onClick={() => setShowReading(true)}

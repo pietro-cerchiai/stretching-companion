@@ -10,6 +10,7 @@ export const T = {
     doneEyebrow: "Séance terminée", doneTitle: "Bien joué.", planned: "Temps prévu", real: "Temps réel",
     overruns: "Dépassements", home: "Retour à l'accueil",
     customLength: "Durée totale (min)", customPlaceholder: "Ex. 10 min",
+    guide: "Guide",
     readingTheme: "Thème de lecture (optionnel)",
 themes: {
       geopolitics: "Géopolitique", history: "Histoire", geography: "Géographie", ai: "IA",
@@ -43,6 +44,7 @@ themes: {
     doneEyebrow: "Sessione completata", doneTitle: "Ben fatto.", planned: "Tempo previsto", real: "Tempo reale",
     overruns: "Tempo extra", home: "Torna all'inizio",
     customLength: "Durata totale (min)", customPlaceholder: "Es. 10 min",
+    guide: "Guida",
     readingTheme: "Tema di lettura (opzionale)",
     themes: {
       geopolitics: "Geopolitica", history: "Storia", geography: "Geografia", ai: "IA",
@@ -76,6 +78,7 @@ themes: {
     doneEyebrow: "Session complete", doneTitle: "Well done.", planned: "Planned time", real: "Actual time",
     overruns: "Overtime", home: "Back to home",
     customLength: "Total length (min)", customPlaceholder: "e.g. 10 min",
+    guide: "Guide",
     readingTheme: "Reading theme (optional)",
     themes: {
       geopolitics: "Geopolitics", history: "History", geography: "Geography", ai: "AI",
