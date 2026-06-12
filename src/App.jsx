@@ -18,6 +18,9 @@ export default function App() {
   const [running, setRunning] = useState(false);
   const [overtimes, setOvertimes] = useState([]); // recorded overrun per finished exercise
   const [minutes, setMinutes] = useState(""); // custom total length in minutes ("" = default)
+  const [theme, setTheme] = useState(null); // selected reading theme (null = none)
+  const [articles, setArticles] = useState([]); // fetched articles for this session
+  const [loadingArticles, setLoadingArticles] = useState(false);
 
   // Durations actually used this session, derived from the custom length.
   const durations = scaleDurations(Number(minutes));
@@ -59,6 +62,26 @@ export default function App() {
     };
   }, [screen]);
 
+  // Fetch articles from our serverless function for the chosen theme + length.
+  const fetchArticles = async () => {
+    if (!theme) {
+      setArticles([]); // no theme picked → no articles
+      return;
+    }
+    setLoadingArticles(true);
+    setArticles([]);
+    try {
+      const min = Number(minutes) || 6; // session length, default 6
+      const res = await fetch(`/api/articles?theme=${theme}&minutes=${min}`);
+      const data = await res.json();
+      setArticles(data.articles || []);
+    } catch (e) {
+      setArticles([]); // on failure, just show none
+    } finally {
+      setLoadingArticles(false);
+    }
+  };
+  
   // Start a fresh session from the first exercise.
   const start = () => {
     setIdx(0);
@@ -67,6 +90,7 @@ export default function App() {
     beeped.current = false;
     setRunning(true);
     setScreen("timer");
+    fetchArticles(); // kick off the article search in the background
   };
 
   // Record this exercise's overrun, then advance or finish.
@@ -115,6 +139,8 @@ export default function App() {
           t={t}
           minutes={minutes}
           setMinutes={setMinutes}
+          theme={theme}
+          setTheme={setTheme}
           onStart={start}
         />
       )}
@@ -126,6 +152,8 @@ export default function App() {
           remaining={remaining}
           running={running}
           overtimes={overtimes}
+          articles={articles}
+          loadingArticles={loadingArticles}
           onToggle={() => setRunning(!running)}
           onNext={next}
           onQuit={quit}
