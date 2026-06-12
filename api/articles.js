@@ -65,14 +65,15 @@ export default async function handler(req, res) {
       })
       .filter((a) => a.readMin >= 2);
 
-    // Pick up to 3 articles, stopping once we're around the target time.
+    // Pick articles until we're close to the target time, up to 5 max.
+    const MAX_ARTICLES = 5;
     const picked = [];
     let total = 0;
     for (const a of articles) {
-      if (picked.length >= 3) break;
+      if (picked.length >= MAX_ARTICLES) break; // hard ceiling
+      if (total >= targetMin) break;            // close enough to target, stop
       picked.push(a);
       total += a.readMin;
-      if (total >= targetMin) break;
     }
 
     return res.status(200).json({ theme, targetMin, totalMin: total, articles: picked });
