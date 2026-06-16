@@ -59,14 +59,12 @@ export default async function handler(req, res) {
       `&type=show&market=FR&limit=20`;
     const r = await fetch(url, { headers: { "Authorization": `Bearer ${token}` } });
     const data = await r.json();
-    const items = data?.shows?.items || [];
     // DEBUG
     return res.status(200).json({
       status: r.status,
-      keys: Object.keys(data),
-      showsKeys: data.shows ? Object.keys(data.shows) : null,
-      total: data.shows ? data.shows.total : null,
-      sample: items[0] ? { name: items[0].name, url: items[0].external_urls?.spotify } : null,
+      errorMessage: data?.error?.message || null,
+      errorFull: data?.error || null,
+      tokenPreview: token ? token.slice(0, 8) + "..." : "NO TOKEN",
       finalUrl: url,
     });
 
