@@ -57,8 +57,8 @@ export default async function handler(req, res) {
 
     // Step B: search episodes (market=FR is required for results).
     const url =
-      `https://api.spotify.com/v1/search?type=episode&limit=20` +
-      `&q=${encodeURIComponent(q)}`;
+      `https://api.spotify.com/v1/search?q=${encodeURIComponent(q)}` +
+      `&type=episode&market=FR&limit=20`;
     const r = await fetch(url, { headers: { "Authorization": `Bearer ${token}` } });
     const data = await r.json();
     const items = data?.episodes?.items || [];
