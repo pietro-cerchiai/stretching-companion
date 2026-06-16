@@ -1,7 +1,7 @@
 // api/podcasts.js
 // Serverless function: searches Spotify for SHOWS (podcasts) matching a theme
 // and returns a few clickable links. Two steps: (A) get a token, (B) search.
-// Searching shows is more reliable than episodes on Spotify's API.
+// Note: the `limit` param triggers a spurious 400 on this app, so it is omitted.
 // Credentials stay server-side, never in the browser.
 
 // Map our app themes to Spotify search keywords (aligned with the article themes).
@@ -53,32 +53,16 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "Could not get Spotify token" });
     }
 
-    // Build the query string cleanly to avoid encoding/parsing issues.
-    const params = new URLSearchParams({
-      q: q,
-      type: "show",
-      market: "FR",
-    });
+    // Search for shows (podcasts). No `limit` param (it 400s on this app).
+    const params = new URLSearchParams({ q: q, type: "show", market: "FR" });
     const url = `https://api.spotify.com/v1/search?${params.toString()}`;
 
     const r = await fetch(url, { headers: { "Authorization": `Bearer ${token}` } });
     const data = await r.json();
-    const items = data?.shows?.items || [];
+    const items = (data && data.shows && data.shows.items) ? data.shows.items : [];
 
     const shows = items
-      .filter((s) => s && s.external_urls?.spotify)
-      .map((s) => ({
-        title: s.name,
-        url: s.external_urls.spotify,
-        publisher: s.publisher || "",
-        description: (s.description || "").slice(0, 120),
-      }))
-      .slice(0, 5);
-
-    return res.status(200).json({ theme, shows });
-
-    const shows = items
-      .filter((s) => s && s.external_urls?.spotify)
+      .filter((s) => s && s.external_urls && s.external_urls.spotify)
       .map((s) => ({
         title: s.name,
         url: s.external_urls.spotify,
