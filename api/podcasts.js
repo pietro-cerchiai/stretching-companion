@@ -58,7 +58,6 @@ export default async function handler(req, res) {
       q: q,
       type: "show",
       market: "FR",
-      limit: "20",
     });
     const url = `https://api.spotify.com/v1/search?${params.toString()}`;
 
