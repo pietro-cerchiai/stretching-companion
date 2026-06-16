@@ -57,12 +57,11 @@ export default async function handler(req, res) {
 
     // Step B: search episodes (market=FR is required for results).
     const url =
-      `https://api.spotify.com/v1/search?type=episode&limit=30` +
-      `&q=${encodeURIComponent(q)}`;
+      `https://api.spotify.com/v1/search?q=${encodeURIComponent(q)}` +
+      `&type=episode&market=FR&limit=20`;
     const r = await fetch(url, { headers: { "Authorization": `Bearer ${token}` } });
     const data = await r.json();
-    // DEBUG: expose what Spotify actually returned
-    return res.status(200).json({ debug: true, status: r.status, keys: Object.keys(data), data });
+    const items = data?.episodes?.items || [];
 
     // Keep episodes whose length is in a sensible window around the target.
     // Aim for one episode that roughly fills the session.
