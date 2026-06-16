@@ -106,7 +106,7 @@ export default function App() {
     const min = Number(minutes) || 6;
     try {
       if (min >= 15) {
-        const res = await fetch(`/api/podcasts?theme=${theme}`);
+        const res = await fetch(`/api/podcasts?theme=${theme}&lang=${lang}`);
         const data = await res.json();
         setPodcasts(data.shows || []);
       } else {
