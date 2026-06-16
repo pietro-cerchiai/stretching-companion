@@ -63,14 +63,19 @@ export default async function handler(req, res) {
 
     const r = await fetch(url, { headers: { "Authorization": `Bearer ${token}` } });
     const data = await r.json();
-    // DEBUG
-    return res.status(200).json({
-      status: r.status,
-      errorMessage: data?.error?.message || null,
-      total: data?.shows?.total ?? null,
-      sample: data?.shows?.items?.[0] ? { name: data.shows.items[0].name, url: data.shows.items[0].external_urls?.spotify } : null,
-      finalUrl: url,
-    });
+    const items = data?.shows?.items || [];
+
+    const shows = items
+      .filter((s) => s && s.external_urls?.spotify)
+      .map((s) => ({
+        title: s.name,
+        url: s.external_urls.spotify,
+        publisher: s.publisher || "",
+        description: (s.description || "").slice(0, 120),
+      }))
+      .slice(0, 5);
+
+    return res.status(200).json({ theme, shows });
 
     const shows = items
       .filter((s) => s && s.external_urls?.spotify)
