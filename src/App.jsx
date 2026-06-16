@@ -21,6 +21,7 @@ export default function App() {
   const [theme, setTheme] = useState(null); // selected reading theme (null = none)
   const [articles, setArticles] = useState([]); // fetched articles for this session
   const [loadingArticles, setLoadingArticles] = useState(false);
+  const [podcasts, setPodcasts] = useState([]); // fetched podcasts for this session
 
   // Durations actually used this session, derived from the custom length.
   const durations = scaleDurations(Number(minutes));
@@ -62,21 +63,31 @@ export default function App() {
     };
   }, [screen]);
 
-  // Fetch articles from our serverless function for the chosen theme + length.
-  const fetchArticles = async () => {
+  // Fetch reading/listening content for the chosen theme + length.
+  // Short sessions (< 15 min) → articles. Long sessions (>= 15 min) → podcasts.
+  const fetchContent = async () => {
     if (!theme) {
-      setArticles([]); // no theme picked → no articles
+      setArticles([]);
+      setPodcasts([]);
       return;
     }
     setLoadingArticles(true);
     setArticles([]);
+    setPodcasts([]);
+    const min = Number(minutes) || 6;
     try {
-      const min = Number(minutes) || 6; // session length, default 6
-      const res = await fetch(`/api/articles?theme=${theme}&minutes=${min}`);
-      const data = await res.json();
-      setArticles(data.articles || []);
+      if (min >= 15) {
+        const res = await fetch(`/api/podcasts?theme=${theme}`);
+        const data = await res.json();
+        setPodcasts(data.shows || []);
+      } else {
+        const res = await fetch(`/api/articles?theme=${theme}&minutes=${min}`);
+        const data = await res.json();
+        setArticles(data.articles || []);
+      }
     } catch (e) {
-      setArticles([]); // on failure, just show none
+      setArticles([]);
+      setPodcasts([]);
     } finally {
       setLoadingArticles(false);
     }
@@ -90,7 +101,7 @@ export default function App() {
     beeped.current = false;
     setRunning(true);
     setScreen("timer");
-    fetchArticles(); // kick off the article search in the background
+    fetchContent(); // kick off the article/podcast search in the background
   };
 
   // Record this exercise's overrun, then advance or finish.
@@ -154,6 +165,7 @@ export default function App() {
           running={running}
           overtimes={overtimes}
           articles={articles}
+          podcasts={podcasts}
           loadingArticles={loadingArticles}
           onToggle={() => setRunning(!running)}
           onNext={next}

@@ -1,18 +1,23 @@
 // src/components/TimerScreen.jsx
 // Active session screen: progress bar, current stretch, the large countdown
-// (counts up in coral when overtime), and the pause / next controls.
+// (counts up in coral when overtime), the pause / next controls, a guide link,
+// and a reading panel that shows ARTICLES (short sessions) or PODCASTS (long
+// sessions) without disturbing the timer.
 
 import { useState } from "react";
 import { C, META } from "../data/stretches";
 import { fmt } from "../utils/time";
 import StretchIcon from "./StretchIcon";
 
-export default function TimerScreen({ t, idx, remaining, running, overtimes, articles, loadingArticles, onToggle, onNext, onQuit }) {
+export default function TimerScreen({ t, idx, remaining, running, overtimes, articles, podcasts, loadingArticles, onToggle, onNext, onQuit }) {
   const [showReading, setShowReading] = useState(false); // is the reading panel open?
   const mono = { fontFamily: "'IBM Plex Mono', monospace" };
   const isOver = remaining < 0;
   const totalOver = overtimes.reduce((s, o) => s + o, 0);
   const liveOver = totalOver + (isOver ? -remaining : 0);
+
+  const hasContent = articles.length > 0 || podcasts.length > 0;
+  const isPodcasts = podcasts.length > 0;
 
   const btn = (primary) => ({
     flex: 1, padding: "18px 0", borderRadius: 14, border: primary ? "none" : `1px solid ${C.line}`,
@@ -37,20 +42,19 @@ export default function TimerScreen({ t, idx, remaining, running, overtimes, art
           {t.cats[META[idx].cat]} · {idx + 1}/{META.length}
         </div>
         <div style={{ display: "flex", gap: 14, alignItems: "center" }}>
-          <a
-            href="/guide.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: C.sage, fontSize: 14, fontWeight: 600, textDecoration: "none", fontFamily: "inherit" }}
+          <button
+            type="button"
+            onClick={() => window.open("/guide.pdf", "_blank")}
+            style={{ background: "none", border: "none", color: C.sage, fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
           >
             {t.guide}
-          </a>
-          {(loadingArticles || articles.length > 0) && (
+          </button>
+          {(loadingArticles || hasContent) && (
             <button
               onClick={() => setShowReading(true)}
               style={{ background: "none", border: "none", color: C.coral, fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}
             >
-              {loadingArticles ? t.loadingArticles : t.readBtn}
+              {loadingArticles ? t.loadingArticles : (isPodcasts ? t.listenBtn : t.readBtn)}
             </button>
           )}
           <button onClick={onQuit} style={{ background: "none", border: "none", color: C.dim, fontSize: 14, cursor: "pointer", fontFamily: "inherit" }}>{t.stop}</button>
@@ -79,8 +83,8 @@ export default function TimerScreen({ t, idx, remaining, running, overtimes, art
         <button onClick={onToggle} style={btn(false)}>{running ? t.pause : t.resume}</button>
         <button onClick={onNext} style={btn(true)}>{idx + 1 >= META.length ? t.finish : t.next}</button>
       </div>
-      
-      {/* Reading panel: slides over the timer, doesn't disturb the session */}
+
+      {/* Reading / listening panel: opens over the timer, doesn't disturb it */}
       {showReading && (
         <div
           onClick={() => setShowReading(false)}
@@ -91,15 +95,16 @@ export default function TimerScreen({ t, idx, remaining, running, overtimes, art
             style={{ background: C.card, width: "100%", maxWidth: 440, borderRadius: "20px 20px 0 0", padding: 24, maxHeight: "75vh", overflowY: "auto" }}
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-              <h3 style={{ fontSize: 17, fontWeight: 700, margin: 0 }}>{t.readingTitle}</h3>
+              <h3 style={{ fontSize: 17, fontWeight: 700, margin: 0 }}>{isPodcasts ? t.listeningTitle : t.readingTitle}</h3>
               <button onClick={() => setShowReading(false)} style={{ background: "none", border: "none", color: C.dim, fontSize: 14, cursor: "pointer", fontFamily: "inherit" }}>{t.closeReading}</button>
             </div>
 
             {loadingArticles && <p style={{ color: C.dim, fontSize: 15 }}>{t.loadingArticles}</p>}
-            {!loadingArticles && articles.length === 0 && <p style={{ color: C.dim, fontSize: 15 }}>{t.noArticles}</p>}
+            {!loadingArticles && !hasContent && <p style={{ color: C.dim, fontSize: 15 }}>{t.noArticles}</p>}
 
-            {articles.map((a, i) => (
-                <a
+            {/* Articles (short sessions) */}
+            {!isPodcasts && articles.map((a, i) => (
+              <a
                 key={i}
                 href={a.url}
                 target="_blank"
@@ -108,6 +113,20 @@ export default function TimerScreen({ t, idx, remaining, running, overtimes, art
               >
                 <div style={{ fontSize: 15, fontWeight: 600, lineHeight: 1.3, marginBottom: 4 }}>{a.title}</div>
                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, color: C.sage }}>{a.readMin} {t.minRead}</div>
+              </a>
+            ))}
+
+            {/* Podcasts (long sessions) */}
+            {isPodcasts && podcasts.map((p, i) => (
+              <a
+                key={i}
+                href={p.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ display: "block", textDecoration: "none", color: C.cream, padding: "14px 0", borderBottom: i < podcasts.length - 1 ? `1px solid ${C.line}` : "none" }}
+              >
+                <div style={{ fontSize: 15, fontWeight: 600, lineHeight: 1.3, marginBottom: 4 }}>{p.title}</div>
+                <div style={{ fontSize: 13, color: C.dim, lineHeight: 1.35 }}>{p.description}</div>
               </a>
             ))}
           </div>
