@@ -62,6 +62,15 @@ export default async function handler(req, res) {
     const r = await fetch(url, { headers: { "Authorization": `Bearer ${token}` } });
     const data = await r.json();
     const items = data?.episodes?.items || [];
+    // DEBUG
+    return res.status(200).json({
+      status: r.status,
+      keys: Object.keys(data),
+      episodesKeys: data.episodes ? Object.keys(data.episodes) : null,
+      total: data.episodes ? data.episodes.total : null,
+      sample: items[0] || null,
+      finalUrl: url,
+    });
 
     // Keep episodes whose length is in a sensible window around the target.
     // Aim for one episode that roughly fills the session.
