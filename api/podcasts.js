@@ -60,6 +60,15 @@ export default async function handler(req, res) {
     const r = await fetch(url, { headers: { "Authorization": `Bearer ${token}` } });
     const data = await r.json();
     const items = data?.shows?.items || [];
+    // DEBUG
+    return res.status(200).json({
+      status: r.status,
+      keys: Object.keys(data),
+      showsKeys: data.shows ? Object.keys(data.shows) : null,
+      total: data.shows ? data.shows.total : null,
+      sample: items[0] ? { name: items[0].name, url: items[0].external_urls?.spotify } : null,
+      finalUrl: url,
+    });
 
     const shows = items
       .filter((s) => s && s.external_urls?.spotify)
