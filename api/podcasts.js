@@ -53,18 +53,23 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "Could not get Spotify token" });
     }
 
-    // Search for shows (podcasts). market=FR keeps results French-friendly.
-    const url =
-      `https://api.spotify.com/v1/search?q=${encodeURIComponent(q)}` +
-      `&type=show&market=FR&limit=20`;
+    // Build the query string cleanly to avoid encoding/parsing issues.
+    const params = new URLSearchParams({
+      q: q,
+      type: "show",
+      market: "FR",
+      limit: "20",
+    });
+    const url = `https://api.spotify.com/v1/search?${params.toString()}`;
+
     const r = await fetch(url, { headers: { "Authorization": `Bearer ${token}` } });
     const data = await r.json();
     // DEBUG
     return res.status(200).json({
       status: r.status,
       errorMessage: data?.error?.message || null,
-      errorFull: data?.error || null,
-      tokenPreview: token ? token.slice(0, 8) + "..." : "NO TOKEN",
+      total: data?.shows?.total ?? null,
+      sample: data?.shows?.items?.[0] ? { name: data.shows.items[0].name, url: data.shows.items[0].external_urls?.spotify } : null,
       finalUrl: url,
     });
 
