@@ -1,26 +1,34 @@
 // api/podcasts.js
-// Serverless function: searches Spotify for SHOWS (podcasts) matching a theme
-// and returns a few clickable links. Two steps: (A) get a token, (B) search.
+// Serverless function: searches Spotify for SHOWS (podcasts) matching a theme,
+// in the app's language (keywords + market), and returns a few clickable links.
+// Two steps: (A) get a token, (B) search.
 // Note: the `limit` param triggers a spurious 400 on this app, so it is omitted.
 // Credentials stay server-side, never in the browser.
 
-// Map our app themes to Spotify search keywords (aligned with the article themes).
+// Search keywords per language, per theme. Keys must match the app's theme ids.
 const THEME_QUERIES = {
-  geopolitics: "géopolitique",
-  history: "histoire",
-  geography: "géographie",
-  ai: "intelligence artificielle",
-  politics: "politique",
-  science: "science",
-  environment: "environnement climat",
-  technology: "technologie",
-  economy: "économie",
-  culture: "culture",
-  books: "littérature",
-  travel: "voyage",
-  society: "société",
-  film: "cinéma",
+  fr: {
+    geopolitics: "géopolitique", history: "histoire", geography: "géographie",
+    ai: "intelligence artificielle", politics: "politique", science: "science",
+    environment: "environnement climat", technology: "technologie", economy: "économie",
+    culture: "culture", books: "littérature", travel: "voyage", society: "société", film: "cinéma",
+  },
+  it: {
+    geopolitics: "geopolitica", history: "storia", geography: "geografia",
+    ai: "intelligenza artificiale", politics: "politica", science: "scienza",
+    environment: "ambiente clima", technology: "tecnologia", economy: "economia",
+    culture: "cultura", books: "letteratura", travel: "viaggi", society: "società", film: "cinema",
+  },
+  en: {
+    geopolitics: "geopolitics", history: "history", geography: "geography",
+    ai: "artificial intelligence", politics: "politics", science: "science",
+    environment: "environment climate", technology: "technology", economy: "economy",
+    culture: "culture", books: "literature", travel: "travel", society: "society", film: "film",
+  },
 };
+
+// Spotify market per app language.
+const MARKETS = { fr: "FR", it: "IT", en: "GB" };
 
 // Step A: get a temporary access token via the Client Credentials flow.
 async function getToken(id, secret) {
@@ -45,7 +53,10 @@ export default async function handler(req, res) {
   }
 
   const theme = (req.query.theme || "geopolitics").toLowerCase();
-  const q = THEME_QUERIES[theme] || theme;
+  const lang = (req.query.lang || "fr").toLowerCase();
+  const queries = THEME_QUERIES[lang] || THEME_QUERIES.fr;
+  const q = queries[theme] || theme;
+  const market = MARKETS[lang] || "FR";
 
   try {
     const token = await getToken(id, secret);
@@ -54,7 +65,7 @@ export default async function handler(req, res) {
     }
 
     // Search for shows (podcasts). No `limit` param (it 400s on this app).
-    const params = new URLSearchParams({ q: q, type: "show", market: "FR" });
+    const params = new URLSearchParams({ q: q, type: "show", market: market });
     const url = `https://api.spotify.com/v1/search?${params.toString()}`;
 
     const r = await fetch(url, { headers: { "Authorization": `Bearer ${token}` } });
@@ -71,7 +82,7 @@ export default async function handler(req, res) {
       }))
       .slice(0, 5);
 
-    return res.status(200).json({ theme, shows });
+    return res.status(200).json({ theme, lang, shows });
   } catch (e) {
     return res.status(500).json({ error: "Failed to fetch podcasts" });
   }
