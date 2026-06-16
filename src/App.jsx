@@ -99,7 +99,7 @@ export default function App() {
     setRemaining(durations[0]);
     setOvertimes([]);
     beeped.current = false;
-    setRunning(true);
+    setRunning(false);
     setScreen("timer");
     fetchContent(); // kick off the article/podcast search in the background
   };
