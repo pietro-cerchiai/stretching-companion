@@ -4,7 +4,7 @@
 import { C, META, TOTAL_PLANNED } from "../data/stretches";
 import { fmt } from "../utils/time";
 
-export default function HomeScreen({ lang, setLang, t, minutes, setMinutes, durations, theme, setTheme, onStart }) {
+export default function HomeScreen({ lang, setLang, t, minutes, setMinutes, durations, theme, setTheme, onShowTutorial, onStart }) {
   const mono = { fontFamily: "'IBM Plex Mono', monospace" };
 
   return (
@@ -81,6 +81,19 @@ export default function HomeScreen({ lang, setLang, t, minutes, setMinutes, dura
           </button>
         ))}
       </div>
+
+      <button
+        type="button"
+        onClick={onShowTutorial}
+        style={{
+          alignSelf: "flex-start", marginBottom: 22,
+          background: "none", border: `1px solid ${C.line}`, borderRadius: 999,
+          width: 34, height: 34, color: C.dim, fontSize: 16, cursor: "pointer",
+          fontFamily: "inherit",
+        }}
+      >
+        ?
+      </button>
 
       <div style={{ ...mono, fontSize: 12, letterSpacing: 2, color: C.sage, textTransform: "uppercase" }}>{t.eyebrow}</div>
       <h1 style={{ fontSize: 44, fontWeight: 700, margin: "10px 0 6px", lineHeight: 1.05 }}>{t.title}</h1>

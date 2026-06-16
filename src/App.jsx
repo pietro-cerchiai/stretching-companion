@@ -12,7 +12,15 @@ import DoneScreen from "./components/DoneScreen";
 import Tutorial from "./components/Tutorial";
 
 export default function App() {
-  const [lang, setLang] = useState("fr");
+// Start in the device language if we support it, otherwise French.
+  const [lang, setLang] = useState(() => {
+    try {
+      const code = (navigator.language || "fr").slice(0, 2).toLowerCase();
+      return ["fr", "it", "en"].includes(code) ? code : "fr";
+    } catch (e) {
+      return "fr";
+    }
+  });
   const [screen, setScreen] = useState("home"); // "home" | "timer" | "done"
   const [idx, setIdx] = useState(0); // current exercise index
   const [remaining, setRemaining] = useState(META[0].dur); // seconds left (negative = overtime)
@@ -176,6 +184,7 @@ export default function App() {
           durations={durations}
           theme={theme}
           setTheme={setTheme}
+          onShowTutorial={() => setShowTutorial(true)}
           onStart={start}
         />
       )}
