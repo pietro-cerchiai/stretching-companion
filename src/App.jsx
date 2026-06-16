@@ -9,6 +9,7 @@ import { beep } from "./utils/time";
 import HomeScreen from "./components/HomeScreen";
 import TimerScreen from "./components/TimerScreen";
 import DoneScreen from "./components/DoneScreen";
+import Tutorial from "./components/Tutorial";
 
 export default function App() {
   const [lang, setLang] = useState("fr");
@@ -22,6 +23,7 @@ export default function App() {
   const [articles, setArticles] = useState([]); // fetched articles for this session
   const [loadingArticles, setLoadingArticles] = useState(false);
   const [podcasts, setPodcasts] = useState([]); // fetched podcasts for this session
+  const [showTutorial, setShowTutorial] = useState(false);
 
   // Durations actually used this session, derived from the custom length.
   const durations = scaleDurations(Number(minutes));
@@ -62,6 +64,25 @@ export default function App() {
       wakeLock.current = null;
     };
   }, [screen]);
+
+  // Show the tutorial automatically on the very first visit.
+  useEffect(() => {
+    try {
+      if (!localStorage.getItem("tutorialSeen")) {
+        setShowTutorial(true);
+      }
+    } catch (e) {
+      // localStorage unavailable → just skip the auto-show
+    }
+  }, []);
+
+  // Close the tutorial and remember it was seen.
+  const closeTutorial = () => {
+    setShowTutorial(false);
+    try {
+      localStorage.setItem("tutorialSeen", "1");
+    } catch (e) {}
+  };
 
   // Fetch reading/listening content for the chosen theme + length.
   // Short sessions (< 15 min) → articles. Long sessions (>= 15 min) → podcasts.
@@ -142,6 +163,8 @@ export default function App() {
         button:active { transform: scale(0.98); }
         body { margin: 0; }
       `}</style>
+
+      {showTutorial && <Tutorial t={t} onClose={closeTutorial} />}
 
       {screen === "home" && (
         <HomeScreen
