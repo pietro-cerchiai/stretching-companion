@@ -1,10 +1,10 @@
 // api/podcasts.js
-// Serverless function: searches Spotify podcast EPISODES for a theme, filters
-// by duration to fit the session, and returns a few clickable links.
-// Two steps: (A) exchange client id/secret for a token, (B) search with it.
+// Serverless function: searches Spotify for SHOWS (podcasts) matching a theme
+// and returns a few clickable links. Two steps: (A) get a token, (B) search.
+// Searching shows is more reliable than episodes on Spotify's API.
 // Credentials stay server-side, never in the browser.
 
-// Map our app themes to Spotify search keywords (kept aligned with the article themes).
+// Map our app themes to Spotify search keywords (aligned with the article themes).
 const THEME_QUERIES = {
   geopolitics: "géopolitique",
   history: "histoire",
@@ -16,7 +16,7 @@ const THEME_QUERIES = {
   technology: "technologie",
   economy: "économie",
   culture: "culture",
-  books: "littérature livres",
+  books: "littérature",
   travel: "voyage",
   society: "société",
   film: "cinéma",
@@ -45,59 +45,33 @@ export default async function handler(req, res) {
   }
 
   const theme = (req.query.theme || "geopolitics").toLowerCase();
-  const targetMin = Number(req.query.minutes) || 20;
   const q = THEME_QUERIES[theme] || theme;
 
   try {
-    // Step A: token
     const token = await getToken(id, secret);
     if (!token) {
       return res.status(500).json({ error: "Could not get Spotify token" });
     }
 
-    // Step B: search episodes (market=FR is required for results).
+    // Search for shows (podcasts). market=FR keeps results French-friendly.
     const url =
       `https://api.spotify.com/v1/search?q=${encodeURIComponent(q)}` +
-      `&type=episode&market=FR&limit=20`;
+      `&type=show&market=FR&limit=20`;
     const r = await fetch(url, { headers: { "Authorization": `Bearer ${token}` } });
     const data = await r.json();
-    const items = data?.episodes?.items || [];
-    // DEBUG
-    return res.status(200).json({
-      status: r.status,
-      keys: Object.keys(data),
-      episodesKeys: data.episodes ? Object.keys(data.episodes) : null,
-      total: data.episodes ? data.episodes.total : null,
-      sample: items[0] || null,
-      finalUrl: url,
-    });
+    const items = data?.shows?.items || [];
 
-    // Keep episodes whose length is in a sensible window around the target.
-    // Aim for one episode that roughly fills the session.
-    const minMs = (targetMin - 8) * 60 * 1000; // lower bound
-    const maxMs = (targetMin + 15) * 60 * 1000; // upper bound
-
-    const episodes = items
-      .filter((e) => e && e.duration_ms)
-      .map((e) => ({
-        title: e.name,
-        url: e.external_urls?.spotify || "",
-        durationMin: Math.round(e.duration_ms / 60000),
-        show: e.show?.name || "",
-        durationMs: e.duration_ms,
+    const shows = items
+      .filter((s) => s && s.external_urls?.spotify)
+      .map((s) => ({
+        title: s.name,
+        url: s.external_urls.spotify,
+        publisher: s.publisher || "",
+        description: (s.description || "").slice(0, 120),
       }))
-      .filter((e) => e.url);
+      .slice(0, 5);
 
-    // Prefer episodes within the window; if none, fall back to the closest ones.
-    let picked = episodes.filter((e) => e.durationMs >= minMs && e.durationMs <= maxMs);
-    if (picked.length === 0) {
-      picked = episodes
-        .slice()
-        .sort((a, b) => Math.abs(a.durationMs - targetMin * 60000) - Math.abs(b.durationMs - targetMin * 60000));
-    }
-    picked = picked.slice(0, 4);
-
-    return res.status(200).json({ theme, targetMin, rawCount: items.length, mappedCount: episodes.length, episodes: picked });
+    return res.status(200).json({ theme, shows });
   } catch (e) {
     return res.status(500).json({ error: "Failed to fetch podcasts" });
   }
